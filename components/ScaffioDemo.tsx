@@ -586,7 +586,7 @@ function AISocraticCoach({ child, sessionData }: any) {
       <SectionTitle
         eyebrow="Step 6"
         title="AI Socratic Coach"
-        subtitle="Live Claude AI coach — reading your brick sequence and asking questions. Never gives answers. Always develops your mathematical reasoning."
+        subtitle="Live AI coach — reading your brick sequence and asking questions. Never gives answers. Always develops your mathematical reasoning."
       />
       <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 20 }}>
         <div>
@@ -651,7 +651,7 @@ function AISocraticCoach({ child, sessionData }: any) {
               </div>
             )}
             <p style={{ fontSize: 11, color: C.slate500, textAlign: "center", margin: "8px 0 0" }}>
-              {conversationComplete ? "Coaching complete · 3 of 3 questions asked" : `Scaffio Coach asks up to 3 questions — never gives answers. Question ${coachQuestionCount} of 3. Powered by Claude AI.`}
+              {conversationComplete ? "Coaching complete · 3 of 3 questions asked" : `Scaffio Coach asks up to 3 questions — never gives answers. Question ${coachQuestionCount} of 3. Powered by Generative AI usign RAG.`}
             </p>
           </Card>
         </div>
@@ -676,7 +676,7 @@ function AISocraticCoach({ child, sessionData }: any) {
             <p style={{ fontSize: 11, color: C.indigoDark, margin: 0, lineHeight: 1.5 }}>
               {conversationComplete 
                 ? "You've completed the coaching cycle with 3 guided questions."
-                : `Claude Sonnet is asking targeted questions. ${3 - coachQuestionCount} question${3 - coachQuestionCount === 1 ? "" : "s"} remaining.`}
+                : `AI is asking targeted questions. ${3 - coachQuestionCount} question${3 - coachQuestionCount === 1 ? "" : "s"} remaining.`}
             </p>
           </div>
         </Card>
@@ -1076,19 +1076,6 @@ export default function ScaffioDemo() {
                     <p style={{ fontSize: 12, lineHeight: 1.6, color: C.slate600, margin: 0 }}>{item.sample}</p>
                   </div>
                 ))}
-              </div>
-            </Card>
-            <Card>
-              <h3 style={{ fontSize: 14, fontWeight: 700, color: C.slate950, margin: "0 0 14px" }}>MVP technology stack</h3>
-              <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}>
-                {[["Frontend","Next.js 14, TypeScript, Tailwind, shadcn/ui"],["Backend","Next.js API routes (no separate server)"],["Database","Supabase PostgreSQL + pgvector"],["Vector search","pgvector in Supabase (replaces Pinecone)"],["AI","Anthropic Claude Haiku + Sonnet via API"],["Payments","Stripe Checkout + Billing"],["Analytics","PostHog + Sentry"]].map(([k,v]) => (
-                  <div key={k as string} style={{ borderRadius: 8, background: C.slate50, padding: "10px 12px", fontSize: 13 }}>
-                    <strong style={{ color: C.slate900 }}>{k}:</strong> <span style={{ color: C.slate600 }}>{v}</span>
-                  </div>
-                ))}
-              </div>
-              <div style={{ borderRadius: 10, background: C.indigoLight, padding: "12px 14px", fontSize: 13, lineHeight: 1.6, color: C.indigoDark }}>
-                Founder/admin can review flagged AI responses, edit RAG items, update prompts, add diagnostic questions and monitor AI cost per active student.
               </div>
             </Card>
           </div>
