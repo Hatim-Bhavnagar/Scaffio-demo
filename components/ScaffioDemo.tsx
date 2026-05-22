@@ -586,7 +586,7 @@ function AISocraticCoach({ child, sessionData }: any) {
       <SectionTitle
         eyebrow="Step 6"
         title="AI Socratic Coach"
-        subtitle="Live AI coach — reading your brick sequence and asking questions. Never gives answers. Always develops your mathematical reasoning."
+        subtitle="Live Claude AI coach — reading your brick sequence and asking questions. Never gives answers. Always develops your mathematical reasoning."
       />
       <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 20 }}>
         <div>
@@ -651,7 +651,7 @@ function AISocraticCoach({ child, sessionData }: any) {
               </div>
             )}
             <p style={{ fontSize: 11, color: C.slate500, textAlign: "center", margin: "8px 0 0" }}>
-              {conversationComplete ? "Coaching complete · 3 of 3 questions asked" : `Scaffio Coach asks up to 3 questions — never gives answers. Question ${coachQuestionCount} of 3. Powered by Generative AI plus RAG.`}
+              {conversationComplete ? "Coaching complete · 3 of 3 questions asked" : `Scaffio Coach asks up to 3 questions — never gives answers. Question ${coachQuestionCount} of 3. Powered by Claude AI.`}
             </p>
           </Card>
         </div>
@@ -676,7 +676,7 @@ function AISocraticCoach({ child, sessionData }: any) {
             <p style={{ fontSize: 11, color: C.indigoDark, margin: 0, lineHeight: 1.5 }}>
               {conversationComplete 
                 ? "You've completed the coaching cycle with 3 guided questions."
-                : `AI is asking targeted questions. ${3 - coachQuestionCount} question${3 - coachQuestionCount === 1 ? "" : "s"} remaining.`}
+                : `Claude Sonnet is asking targeted questions. ${3 - coachQuestionCount} question${3 - coachQuestionCount === 1 ? "" : "s"} remaining.`}
             </p>
           </div>
         </Card>
@@ -730,31 +730,173 @@ export default function ScaffioDemo() {
     }
 
     switch (screen) {
-      // ── OVERVIEW ───────────────────────────────────────────────────────────
+      // ── OVERVIEW (LANDING PAGE) ────────────────────────────────────────────
       case "Overview": return (
-        <div>
-          <SectionTitle eyebrow="Demo" title="Scaffio Application"
-            subtitle="An interactive demo showing the full user journey: parent concern → AI Maths Health Check → live diagnostic report → Logic Brick Workshop → AI Socratic Coach → badges and parent progress reporting." />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16, marginBottom: 20 }}>
-            {[["🧭","Diagnose the real gap","Scaffio analyses answer accuracy, explanation quality, confidence and misconception patterns — not just scores."],["🧱","Capture reasoning","Students select and sequence Logic Bricks, making their mathematical thinking visible and AI-reviewable."],["🤖","Coach Socratically","Live  AI asks guided questions using Scaffio's curriculum, misconception framework and RAG knowledge base."]].map(([icon,title,desc]) => (
-              <Card key={title as string}>
-                <div style={{ fontSize: 32, marginBottom: 10 }}>{icon}</div>
-                <h3 style={{ fontWeight: 700, color: C.slate950, margin: "0 0 8px", fontSize: 14 }}>{title}</h3>
-                <p style={{ fontSize: 13, lineHeight: 1.6, color: C.slate600, margin: 0 }}>{desc}</p>
-              </Card>
-            ))}
+        <div style={{ minHeight: "100vh", background: C.slate50 }}>
+          {/* Hero Section */}
+          <div style={{ background: `linear-gradient(135deg, ${C.navy} 0%, #1e3a8a 100%)`, color: C.white, padding: "60px 40px", textAlign: "center", marginBottom: 40 }}>
+            <div style={{ maxWidth: 900, margin: "0 auto" }}>
+              <h1 style={{ fontSize: 48, fontWeight: 900, margin: "0 0 20px", letterSpacing: "-1.5px", lineHeight: 1.2 }}>
+                The maths gap is a <span style={{ color: C.gold }}>system failure.</span><br />Not a student failure.
+              </h1>
+              <p style={{ fontSize: 18, lineHeight: 1.8, margin: "0 0 32px", color: "rgba(255,255,255,0.85)", maxWidth: 700, marginLeft: "auto", marginRight: "auto" }}>
+                1 in 3 UK students leave secondary school without a standard GCSE maths pass. Scaffio fixes the root cause — not the symptom.
+              </p>
+              <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+                <Button onClick={() => goto("Parent Onboarding")} style={{ background: C.gold, color: C.navy, border: "none", padding: "16px 32px", fontSize: 16, fontWeight: 700, cursor: "pointer", borderRadius: 10 }}>
+                  Try the free demo →
+                </Button>
+                <Button onClick={() => setScreen("_LOGIN")} variant="ghost" style={{ border: `2px solid ${C.gold}`, color: C.gold, padding: "14px 30px", fontSize: 16, fontWeight: 700, cursor: "pointer", borderRadius: 10 }}>
+                  Parent login
+                </Button>
+              </div>
+            </div>
           </div>
-          <Card style={{ background: "linear-gradient(135deg,#eef2ff,#e0f2fe)" }}>
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: C.slate950, margin: "0 0 14px" }}>MVP journey</h3>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 20 }}>
-              {["Parent Onboarding","Student Welcome","Maths Health Check","Diagnostic Report","Logic Brick Workshop","AI Socratic Coach","Badges","Parent Dashboard"].map((step) => (
-                <Pill key={step} active={step==="Maths Health Check"}>{step}</Pill>
+
+          {/* Pain Points Section */}
+          <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 40px 60px" }}>
+            <div style={{ textAlign: "center", marginBottom: 40 }}>
+              <p style={{ fontSize: 13, fontWeight: 700, color: C.indigo, textTransform: "uppercase", letterSpacing: "0.15em", margin: "0 0 12px" }}>The problem</p>
+              <h2 style={{ fontSize: 36, fontWeight: 800, color: C.slate950, margin: 0, letterSpacing: "-0.5px" }}>Why UK students struggle with maths</h2>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
+              {[
+                {
+                  icon: "📊",
+                  title: "Gaps aren't diagnosed correctly",
+                  desc: "Traditional tests measure scores, not the real misconceptions blocking progress. A student who gets 60% might have 3 different root problems.",
+                  pain: "1 in 3 leave secondary without a standard pass"
+                },
+                {
+                  icon: "🎯",
+                  title: "One-size-fits-all tutoring fails",
+                  desc: "Generic tutoring treats all low scorers the same. But inverse operations gaps are completely different from proportional reasoning gaps.",
+                  pain: "£2B/year spent on ineffective private tutoring"
+                },
+                {
+                  icon: "😟",
+                  title: "Low confidence breeds avoidance",
+                  desc: "Without understanding the root cause, students develop maths anxiety. They avoid homework. They avoid GCSE revision. The gap widens.",
+                  pain: "82% of parents report low child confidence"
+                },
+                {
+                  icon: "⏰",
+                  title: "Remediation comes too late",
+                  desc: "Gaps discovered at Year 10 are too late. Students have already built wrong mental models. They've memorised rules without understanding.",
+                  pain: "Years 7–9 gaps predict GCSE failure"
+                },
+                {
+                  icon: "🤷",
+                  title: "Parents feel powerless",
+                  desc: "Schools lack time for 1-to-1 feedback. Parents get vague reports ('needs to improve fractions') without knowing how to help.",
+                  pain: "Parents can't diagnose or close gaps"
+                },
+                {
+                  icon: "🧠",
+                  title: "Transfer skills are weak",
+                  desc: "Even when students pass a test on linear equations, they can't apply the same reasoning to proportional reasoning or other contexts.",
+                  pain: "Only 18% show strong transfer ability"
+                },
+              ].map((pain, idx) => (
+                <Card key={idx} style={{ background: C.white, border: `1px solid ${C.border}` }}>
+                  <div style={{ fontSize: 40, marginBottom: 12 }}>{pain.icon}</div>
+                  <h3 style={{ fontSize: 16, fontWeight: 800, color: C.slate950, margin: "0 0 10px" }}>{pain.title}</h3>
+                  <p style={{ fontSize: 13, lineHeight: 1.6, color: C.slate600, margin: "0 0 14px" }}>{pain.desc}</p>
+                  <div style={{ background: "#fef3e2", border: "1px solid #fed7aa", borderRadius: 8, padding: "10px 12px" }}>
+                    <p style={{ fontSize: 12, fontWeight: 700, color: "#b45309", margin: 0 }}>🚨 {pain.pain}</p>
+                  </div>
+                </Card>
               ))}
             </div>
-            <div style={{ display: "flex", gap: 10 }}>
-              <Button onClick={() => goto("Parent Onboarding")}>Start client walkthrough</Button>
-              <Button variant="secondary" onClick={() => goto("Admin / RAG Library")}>View RAG design</Button>
+          </div>
+
+          {/* How Scaffio Solves It */}
+          <div style={{ background: C.white, padding: "60px 40px", marginBottom: 40 }}>
+            <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+              <div style={{ textAlign: "center", marginBottom: 40 }}>
+                <p style={{ fontSize: 13, fontWeight: 700, color: C.indigo, textTransform: "uppercase", letterSpacing: "0.15em", margin: "0 0 12px" }}>The solution</p>
+                <h2 style={{ fontSize: 36, fontWeight: 800, color: C.slate950, margin: 0, letterSpacing: "-0.5px" }}>How Scaffio closes the gap</h2>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+                {[
+                  { emoji: "🧭", title: "Diagnose the real gap", desc: "AI analyzes answer accuracy, explanation quality, confidence and misconception patterns — not just scores." },
+                  { emoji: "🧱", title: "Capture reasoning", desc: "Logic Bricks make mathematical thinking visible. Students show their reasoning, not just their answer." },
+                  { emoji: "🤖", title: "Coach Socratically", desc: "AI asks targeted questions using curriculum context. Develops understanding, never gives answers." },
+                ].map((solution, idx) => (
+                  <Card key={idx}>
+                    <div style={{ fontSize: 44, marginBottom: 12 }}>{solution.emoji}</div>
+                    <h3 style={{ fontSize: 16, fontWeight: 800, color: C.slate950, margin: "0 0 12px" }}>{solution.title}</h3>
+                    <p style={{ fontSize: 13, lineHeight: 1.6, color: C.slate600, margin: 0 }}>{solution.desc}</p>
+                  </Card>
+                ))}
+              </div>
             </div>
+          </div>
+
+          {/* Stats */}
+          <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 40px 60px", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 20 }}>
+            {[
+              ["1.9M", "UK Year 7–9 students"],
+              ["£2B/yr", "Private tutoring market"],
+              ["82%", "Parents report low confidence"],
+              ["78%", "Interested after seeing Scaffio"],
+            ].map(([stat, label]) => (
+              <div key={stat} style={{ textAlign: "center" }}>
+                <p style={{ fontSize: 36, fontWeight: 900, color: C.indigo, margin: "0 0 8px" }}>{stat}</p>
+                <p style={{ fontSize: 13, color: C.slate600, margin: 0 }}>{label}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* CTA */}
+          <div style={{ background: C.indigoLight, padding: "40px", textAlign: "center", borderRadius: 14, maxWidth: 800, margin: "0 auto 40px", marginLeft: "auto", marginRight: "auto" }}>
+            <h3 style={{ fontSize: 20, fontWeight: 800, color: C.slate950, margin: "0 0 12px" }}>Ready to close the maths gap?</h3>
+            <p style={{ fontSize: 14, color: C.slate600, margin: "0 0 20px" }}>Try the free Health Check. No credit card needed. 5 minutes. AI-powered.</p>
+            <Button onClick={() => goto("Parent Onboarding")} style={{ background: C.indigo, color: C.white, border: "none", padding: "14px 32px", fontSize: 15, fontWeight: 700, cursor: "pointer", borderRadius: 10 }}>
+              Start free demo →
+            </Button>
+          </div>
+        </div>
+      );
+
+      // ── PARENT LOGIN ───────────────────────────────────────────────────────
+      case "_LOGIN": return (
+        <div style={{ minHeight: "100vh", background: `linear-gradient(135deg, ${C.navy} 0%, #1e3a8a 100%)`, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }}>
+          <Card style={{ background: C.white, maxWidth: 420, width: "100%" }}>
+            <div style={{ textAlign: "center", marginBottom: 28 }}>
+              <div style={{ width: 50, height: 50, background: C.indigo, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, color: C.white, fontSize: 24, margin: "0 auto 16px" }}>S</div>
+              <h2 style={{ fontSize: 24, fontWeight: 800, color: C.slate950, margin: "0 0 8px" }}>Parent login</h2>
+              <p style={{ fontSize: 13, color: C.slate600, margin: 0 }}>Access your child's Scaffio account</p>
+            </div>
+
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ fontSize: 13, fontWeight: 600, color: C.slate700, display: "block", marginBottom: 6 }}>Email address</label>
+              <input type="email" placeholder="parent@example.com"
+                style={{ width: "100%", borderRadius: 8, border: `1.5px solid ${C.border}`, padding: "11px 14px", fontSize: 14, outline: "none", fontFamily: "inherit", boxSizing: "border-box" }} />
+            </div>
+
+            <div style={{ marginBottom: 20 }}>
+              <label style={{ fontSize: 13, fontWeight: 600, color: C.slate700, display: "block", marginBottom: 6 }}>Password</label>
+              <input type="password" placeholder="••••••••"
+                style={{ width: "100%", borderRadius: 8, border: `1.5px solid ${C.border}`, padding: "11px 14px", fontSize: 14, outline: "none", fontFamily: "inherit", boxSizing: "border-box" }} />
+            </div>
+
+            <Button onClick={() => goto("Parent Onboarding")} style={{ width: "100%", background: C.indigo, color: C.white, border: "none", padding: "13px 20px", fontSize: 15, fontWeight: 700, cursor: "pointer", borderRadius: 8 }}>
+              Sign in to your account
+            </Button>
+
+            <div style={{ textAlign: "center", marginTop: 20 }}>
+              <p style={{ fontSize: 13, color: C.slate600, margin: "0 0 12px" }}>Don't have an account?</p>
+              <Button onClick={() => goto("Parent Onboarding")} variant="ghost" style={{ width: "100%", padding: "11px 20px", fontSize: 14, fontWeight: 600, cursor: "pointer", borderRadius: 8 }}>
+                Create new account
+              </Button>
+            </div>
+
+            <button onClick={() => goto("Overview")} style={{ width: "100%", background: "none", border: "none", color: C.slate500, padding: "12px", fontSize: 13, fontWeight: 600, cursor: "pointer", marginTop: 12 }}>
+              ← Back
+            </button>
           </Card>
         </div>
       );
@@ -934,6 +1076,19 @@ export default function ScaffioDemo() {
                     <p style={{ fontSize: 12, lineHeight: 1.6, color: C.slate600, margin: 0 }}>{item.sample}</p>
                   </div>
                 ))}
+              </div>
+            </Card>
+            <Card>
+              <h3 style={{ fontSize: 14, fontWeight: 700, color: C.slate950, margin: "0 0 14px" }}>MVP technology stack</h3>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}>
+                {[["Frontend","Next.js 14, TypeScript, Tailwind, shadcn/ui"],["Backend","Next.js API routes (no separate server)"],["Database","Supabase PostgreSQL + pgvector"],["Vector search","pgvector in Supabase (replaces Pinecone)"],["AI","Anthropic Claude Haiku + Sonnet via API"],["Payments","Stripe Checkout + Billing"],["Analytics","PostHog + Sentry"]].map(([k,v]) => (
+                  <div key={k as string} style={{ borderRadius: 8, background: C.slate50, padding: "10px 12px", fontSize: 13 }}>
+                    <strong style={{ color: C.slate900 }}>{k}:</strong> <span style={{ color: C.slate600 }}>{v}</span>
+                  </div>
+                ))}
+              </div>
+              <div style={{ borderRadius: 10, background: C.indigoLight, padding: "12px 14px", fontSize: 13, lineHeight: 1.6, color: C.indigoDark }}>
+                Founder/admin can review flagged AI responses, edit RAG items, update prompts, add diagnostic questions and monitor AI cost per active student.
               </div>
             </Card>
           </div>
