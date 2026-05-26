@@ -74,7 +74,7 @@ function Pill({ children, active = false }: any) {
 const modules = [
   "Overview", "Parent Onboarding", "Student Welcome",
   "Maths Health Check", "Diagnostic Report", "Logic Brick Workshop",
-  "AI Socratic Coach", "Badges & Certificates", "Parent Dashboard", "Admin / RAG Library",
+  "Maths Problem Solving", "Badges & Certificates", "Parent Dashboard", "Admin / RAG Library",
 ];
 
 const concerns = ["Low confidence", "Algebra feels confusing", "Homework avoidance", "Needs stronger foundations", "Future skills: AI, data & coding"];
@@ -90,6 +90,147 @@ const BRICKS = [
   { id: "percentage", name: "Find percentage", icon: "💯", desc: "Express as a percentage" },
   { id: "interpret", name: "Interpret in context", icon: "🗺️", desc: "What does this mean in real life?" },
 ];
+
+// ─── MATHS PROBLEM SOLVING DATA ────────────────────────────────────────────
+const THEMATIC_PROBLEMS = [
+  {
+    id: "basic_operations_ai",
+    theme: "AI & Machine Learning",
+    emoji: "🤖",
+    color: "#4f46e5",
+    title: "Basic Number Operations and Place Value",
+    subtitle: "How many calculations does AI do?",
+    coreMaths: "Basic number operations, multiplication, division",
+    realWorldContext: "Estimate operations in everyday devices: if a phone unlock uses 1,000 operations and you unlock 20 times a day, how many per week? AI models train on millions of images, each requiring many operations.",
+    problems: [
+      {
+        id: "operations_1",
+        question: "Your phone performs 1,000 operations per unlock. You unlock it 20 times daily. How many operations per week?",
+        hint: "Multiply: operations × unlocks per day × days per week",
+        expectedApproach: "1,000 × 20 × 7 = 140,000",
+      },
+      {
+        id: "operations_2",
+        question: "An AI model trains on 50 million images. Each image requires 2,000 operations. Total operations needed?",
+        hint: "Use multiplication of large numbers",
+        expectedApproach: "50,000,000 × 2,000 = 100,000,000,000",
+      },
+    ],
+    programmingTask: {
+      title: "Build a Calculator with Training Counter",
+      language: "Python or Scratch",
+      description: "Create a four-operation calculator. Add a 'training counter' that asks for data points and epochs, then computes total training steps.",
+      pseudocode: `
+# Calculator function
+def calculate(num1, operation, num2):
+    if operation == '+': return num1 + num2
+    elif operation == '-': return num1 - num2
+    elif operation == '*': return num1 * num2
+    elif operation == '/': return num1 / num2
+
+# Training counter
+data_points = input("How many data points?")
+epochs = input("How many epochs?")
+total_steps = data_points × epochs
+print(f"Total training steps: {total_steps}")
+      `,
+    },
+  },
+  {
+    id: "primes_blockchain",
+    theme: "Blockchain & Cryptography",
+    emoji: "🔐",
+    color: "#dc2626",
+    title: "Factors, Multiples, and Primes",
+    subtitle: "How blockchain security relies on prime numbers",
+    coreMaths: "Prime numbers, factors, multiples, prime factorisation, HCF, LCM",
+    realWorldContext: "Secure communication and blockchain systems rely on prime numbers. Factorising very large primes is computationally hard — this 'hard problem' underpins cryptographic security. A 200-digit number takes humans and computers serious time to factor.",
+    problems: [
+      {
+        id: "primes_1",
+        question: "Find all prime numbers between 1 and 30.",
+        hint: "A prime number has exactly 2 factors: 1 and itself",
+        expectedApproach: "2, 3, 5, 7, 11, 13, 17, 19, 23, 29",
+      },
+      {
+        id: "primes_2",
+        question: "Find the prime factorisation of 84 using a factor tree.",
+        hint: "Start: 84 = 2 × 42, then keep dividing until all are prime",
+        expectedApproach: "84 = 2² × 3 × 7",
+      },
+      {
+        id: "primes_3",
+        question: "Why is factorising a 200-digit number hard? What does this tell us about security?",
+        hint: "Think about computers checking billions of factors per second — would it be fast or slow?",
+        expectedApproach: "Even computers would take millions of years, so large primes protect data",
+      },
+    ],
+    programmingTask: {
+      title: "Prime Checker and Cryptographic Encoding",
+      language: "Python or Scratch",
+      description: "Write a program that checks if a number is prime. Generate primes up to 100. Optional: use primes to encode a word (A→2, B→3, C→5...) and encode/decode messages.",
+      pseudocode: `
+# Prime checker
+def is_prime(n):
+    if n < 2: return False
+    for i in range(2, n):
+        if n % i == 0: return False
+    return True
+
+# Generate primes up to 100
+primes = [n for n in range(2, 101) if is_prime(n)]
+print(primes)
+
+# Optional: Simple cipher (A=2, B=3, C=5...)
+primes_map = {'A': 2, 'B': 3, 'C': 5, 'D': 7, ...}
+word = "HELLO"
+encoded = [primes_map[letter] for letter in word]
+# To decode: factor the product of all numbers
+      `,
+    },
+  },
+  {
+    id: "data_patterns",
+    theme: "Data Science & Statistics",
+    emoji: "📊",
+    color: "#059669",
+    title: "Patterns, Sequences, and Averages",
+    subtitle: "Finding patterns in datasets",
+    coreMaths: "Sequences, averages, mean/median/mode, data interpretation",
+    realWorldContext: "Data scientists find patterns in millions of data points. Understanding averages, trends, and outliers helps predict future outcomes — from weather forecasting to disease tracking.",
+    problems: [
+      {
+        id: "data_1",
+        question: "A dataset of test scores: 45, 62, 58, 92, 71, 88, 55. Find the mean, median, and mode.",
+        hint: "Mean = sum ÷ count. Median = middle value when sorted. Mode = most frequent.",
+        expectedApproach: "Mean: 67.3, Median: 62, Mode: none (all unique)",
+      },
+      {
+        id: "data_2",
+        question: "Why is the median sometimes better than the mean when there are outliers?",
+        hint: "Think about a few very high or very low values affecting the average",
+        expectedApproach: "One outlier can skew the mean; median ignores extreme values",
+      },
+    ],
+    programmingTask: {
+      title: "Data Analysis Tool",
+      language: "Python",
+      description: "Write a program that reads a dataset of numbers and calculates mean, median, mode, and standard deviation. Visualise the distribution.",
+      pseudocode: `
+import statistics
+
+data = [45, 62, 58, 92, 71, 88, 55]
+mean = statistics.mean(data)
+median = statistics.median(data)
+mode = statistics.mode(data)  # or handle no mode
+stdev = statistics.stdev(data)
+
+print(f"Mean: {mean}, Median: {median}, Stdev: {stdev}")
+      `,
+    },
+  },
+];
+
 
 // ─── LIVE DIAGNOSTIC DATA ────────────────────────────────────────────────────
 const DIAGNOSTIC_QS = [
@@ -416,23 +557,62 @@ function DiagnosticReport({ child, diagResult, onNext }: any) {
 }
 
 // ─── SCREEN: LOGIC BRICK WORKSHOP (SMART FARM) ────────────────────────────────
-function LogicBrickWorkshop({ child, diagResult, onCoach }: any) {
+function LogicBrickWorkshop({ child, diagResult, onComplete }: any) {
   const [sequence, setSequence] = useState<any[]>([]);
   const [workings, setWorkings] = useState<Record<string, string>>({});
   const [finalAnswer, setFinalAnswer] = useState("");
   const [interpretation, setInterpretation] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  
+  // Embedded AI coach state
+  const [coachMessages, setCoachMessages] = useState<any[]>([]);
+  const [coachInput, setCoachInput] = useState("");
+  const [coachLoading, setCoachLoading] = useState(false);
+  const coachRef = useRef<HTMLDivElement>(null);
+  const coachInputRef = useRef<HTMLInputElement>(null);
 
   const usedIds = sequence.map(b => b.id);
   const availBricks = BRICKS.filter(b => !usedIds.includes(b.id));
   const canSubmit = sequence.length >= 2 && finalAnswer.trim() && interpretation.trim().length > 10;
+  
+  const brickNames = sequence.map(b => b.name).join(" → ");
+  const coachQuestionCount = coachMessages.filter(m => m.role === "coach").length;
+  const coachComplete = coachQuestionCount >= 3;
+
+  // Initialize coach when workshop submitted
+  useEffect(() => {
+    if (!submitted) return;
+    const firstBrick = sequence?.[0];
+    const prompt = firstBrick
+      ? `I just completed the Logic Brick Workshop. I started with "${firstBrick.name}". My final answer is: ${finalAnswer} ${PROJECT.answerUnit}. My interpretation: ${interpretation}. Can you help me think deeper?`
+      : "I just completed the Logic Brick Workshop. Can you help me reflect on my thinking?";
+    setCoachLoading(true);
+    getCoachResponse(prompt, { sequence, finalAnswer, interpretation, gaps: diagResult?.gaps }, [])
+      .then(r => { setCoachMessages([{ role: "coach", content: r }]); setCoachLoading(false); });
+  }, [submitted]);
+
+  useEffect(() => { coachRef.current?.scrollIntoView({ behavior: "smooth" }); }, [coachMessages, coachLoading]);
+
+  const sendCoachMessage = async () => {
+    if (!coachInput.trim() || coachLoading || coachComplete) return;
+    const userMsg = { role: "user", content: coachInput };
+    const newMsgs = [...coachMessages, userMsg];
+    setCoachMessages(newMsgs);
+    setCoachInput("");
+    setCoachLoading(true);
+    const history = newMsgs.map(m => ({ role: m.role === "coach" ? "assistant" : "user", content: m.content }));
+    const r = await getCoachResponse(coachInput, { sequence, finalAnswer, interpretation }, history.slice(0, -1));
+    setCoachMessages(p => [...p, { role: "coach", content: r }]);
+    setCoachLoading(false);
+    setTimeout(() => coachInputRef.current?.focus(), 100);
+  };
 
   return (
     <div>
       <SectionTitle
         eyebrow="Step 5"
         title="Logic Brick Workshop"
-        subtitle="Students solve real-world applied maths missions by selecting and sequencing Logic Bricks — capturing reasoning before final answers."
+        subtitle="Students solve real-world applied maths missions by selecting and sequencing Logic Bricks. Then get real-time AI coaching."
       />
       <div style={{ maxWidth: 1000 }}>
         {/* Project card */}
@@ -452,237 +632,289 @@ function LogicBrickWorkshop({ child, diagResult, onCoach }: any) {
           </div>
         </Card>
 
-        {/* Grid: Bricks + Workspace */}
-        <div style={{ display: "grid", gridTemplateColumns: "220px 1fr", gap: 20 }}>
-          {/* Brick library */}
-          <div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: C.slate500, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 12 }}>Logic Bricks</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {availBricks.map(brick => (
-                <button key={brick.id} onClick={() => !submitted && setSequence(p => [...p, brick])}
-                  style={{
-                    background: C.white, border: `1px solid ${C.border}`, borderRadius: 10, padding: "12px 14px", cursor: submitted ? "default" : "pointer",
-                    textAlign: "left", opacity: submitted ? 0.5 : 1, transition: "all 0.15s", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 10
-                  }}>
-                  <span style={{ fontSize: 18 }}>{brick.icon}</span>
-                  <div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: C.slate900 }}>{brick.name}</div>
-                    <div style={{ fontSize: 11, color: C.slate500 }}>{brick.desc}</div>
+        {!submitted ? (
+          // ── WORKSHOP (BEFORE SUBMISSION) ────────────────────────────────────
+          <div style={{ display: "grid", gridTemplateColumns: "220px 1fr", gap: 20 }}>
+            {/* Brick library */}
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: C.slate500, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 12 }}>Logic Bricks</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {availBricks.map(brick => (
+                  <button key={brick.id} onClick={() => !submitted && setSequence(p => [...p, brick])}
+                    style={{
+                      background: C.white, border: `1px solid ${C.border}`, borderRadius: 10, padding: "12px 14px", cursor: "pointer",
+                      textAlign: "left", opacity: submitted ? 0.5 : 1, transition: "all 0.15s", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 10
+                    }}>
+                    <span style={{ fontSize: 18 }}>{brick.icon}</span>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: C.slate900 }}>{brick.name}</div>
+                      <div style={{ fontSize: 11, color: C.slate500 }}>{brick.desc}</div>
+                    </div>
+                  </button>
+                ))}
+                {availBricks.length === 0 && <p style={{ fontSize: 12, color: C.slate500, textAlign: "center", padding: 10 }}>All bricks used</p>}
+              </div>
+            </div>
+
+            {/* Workspace */}
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: C.slate500, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 12 }}>My reasoning trail</div>
+              {sequence.length === 0 ? (
+                <Card style={{ textAlign: "center", color: C.slate500, padding: "48px 32px", border: `2px dashed ${C.border}` }}>
+                  Click bricks on the left to build your reasoning trail
+                </Card>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                  {sequence.map((brick, i) => (
+                    <Card key={brick.id} style={{ padding: "14px 16px" }}>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                          <span style={{ width: 24, height: 24, background: C.indigo, color: C.white, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, flexShrink: 0 }}>{i + 1}</span>
+                          <span style={{ fontSize: 18 }}>{brick.icon}</span>
+                          <span style={{ fontSize: 13, fontWeight: 700, color: C.slate900 }}>{brick.name}</span>
+                        </div>
+                        {!submitted && (
+                          <button onClick={() => { setSequence(p => p.filter(b => b.id !== brick.id)); setWorkings(p => { const n = { ...p }; delete n[brick.id]; return n; }); }}
+                            style={{ background: "none", border: "none", color: C.slate500, cursor: "pointer", fontSize: 20, padding: 0 }}>×</button>
+                        )}
+                      </div>
+                      <textarea disabled={submitted} value={workings[brick.id] || ""}
+                        onChange={e => setWorkings(p => ({ ...p, [brick.id]: e.target.value }))}
+                        placeholder={`Show your working for "${brick.name}"…`}
+                        style={{ width: "100%", height: 56, borderRadius: 8, border: `1px solid ${C.border}`, padding: "10px 12px", fontSize: 13, outline: "none", resize: "none", fontFamily: "inherit", boxSizing: "border-box", opacity: submitted ? 0.6 : 1 }} />
+                    </Card>
+                  ))}
+                </div>
+              )}
+
+              {sequence.length >= 1 && (
+                <Card style={{ marginTop: 16 }}>
+                  <label style={{ fontSize: 13, fontWeight: 600, color: C.slate700, display: "block", marginBottom: 8 }}>My final answer</label>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+                    <input disabled={submitted} value={finalAnswer} onChange={e => setFinalAnswer(e.target.value)} type="number"
+                      style={{ width: 120, borderRadius: 8, border: `1.5px solid ${C.border}`, padding: "10px 12px", fontSize: 14, outline: "none", fontFamily: "inherit" }} placeholder="e.g. 75" />
+                    <span style={{ fontSize: 13, color: C.slate500 }}>days</span>
                   </div>
-                </button>
-              ))}
-              {availBricks.length === 0 && <p style={{ fontSize: 12, color: C.slate500, textAlign: "center", padding: 10 }}>All bricks used</p>}
+                  <label style={{ fontSize: 13, fontWeight: 600, color: C.slate700, display: "block", marginBottom: 8 }}>{PROJECT.interpretationPrompt}</label>
+                  <textarea disabled={submitted} value={interpretation} onChange={e => setInterpretation(e.target.value)}
+                    style={{ width: "100%", height: 76, borderRadius: 8, border: `1.5px solid ${C.border}`, padding: "10px 12px", fontSize: 13, outline: "none", resize: "none", fontFamily: "inherit", boxSizing: "border-box" }}
+                    placeholder="What does the number mean for the farmer?" />
+                </Card>
+              )}
+
+              {!submitted ? (
+                <Button disabled={!canSubmit} onClick={() => setSubmitted(true)} style={{ marginTop: 16, opacity: canSubmit ? 1 : 0.4 }}>Show my thinking →</Button>
+              ) : null}
             </div>
           </div>
-
-          {/* Workspace */}
+        ) : (
+          // ── EMBEDDED AI COACH (AFTER SUBMISSION) ────────────────────────────
           <div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: C.slate500, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 12 }}>My reasoning trail</div>
-            {sequence.length === 0 ? (
-              <Card style={{ textAlign: "center", color: C.slate500, padding: "48px 32px", border: `2px dashed ${C.border}` }}>
-                Click bricks on the left to build your reasoning trail
-              </Card>
-            ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                {sequence.map((brick, i) => (
-                  <Card key={brick.id} style={{ padding: "14px 16px" }}>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                        <span style={{ width: 24, height: 24, background: C.indigo, color: C.white, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, flexShrink: 0 }}>{i + 1}</span>
-                        <span style={{ fontSize: 18 }}>{brick.icon}</span>
-                        <span style={{ fontSize: 13, fontWeight: 700, color: C.slate900 }}>{brick.name}</span>
-                      </div>
-                      {!submitted && (
-                        <button onClick={() => { setSequence(p => p.filter(b => b.id !== brick.id)); setWorkings(p => { const n = { ...p }; delete n[brick.id]; return n; }); }}
-                          style={{ background: "none", border: "none", color: C.slate500, cursor: "pointer", fontSize: 20, padding: 0 }}>×</button>
-                      )}
+            <Card style={{ background: C.emeraldLight, border: `1px solid ${C.emerald}`, marginBottom: 20 }}>
+              <p style={{ fontWeight: 700, fontSize: 14, color: C.emerald, margin: "0 0 8px" }}>✅ Reasoning trail captured!</p>
+              <p style={{ fontSize: 13, color: C.slate600, margin: 0, lineHeight: 1.5 }}>
+                Your brick sequence: <span style={{ fontWeight: 600, color: C.slate900 }}>{brickNames || "—"}</span>
+              </p>
+            </Card>
+
+            <SectionTitle eyebrow="Embedded coach" title="AI Socratic Coach" subtitle="Answer questions to deepen your thinking. We ask up to 4 questions." />
+
+            {/* Coach messages */}
+            <Card style={{ display: "flex", flexDirection: "column", minHeight: 300, maxHeight: 440, marginBottom: 20 }}>
+              <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 14, paddingBottom: 8 }}>
+                <style>{`@keyframes bounce{0%,80%,100%{transform:scale(1)}40%{transform:scale(1.4)}}`}</style>
+                {coachMessages.map((msg, i) => (
+                  <div key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start", flexDirection: msg.role === "user" ? "row-reverse" : "row" }}>
+                    {msg.role === "coach" && (
+                      <div style={{ width: 32, height: 32, background: C.indigo, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: C.white, fontWeight: 800, fontSize: 12, flexShrink: 0 }}>AI</div>
+                    )}
+                    <div style={{ background: msg.role === "coach" ? C.slate100 : C.indigo, color: msg.role === "coach" ? C.slate700 : C.white, borderRadius: msg.role === "coach" ? "4px 12px 12px 12px" : "12px 4px 12px 12px", padding: "12px 16px", maxWidth: "80%", fontSize: 13, lineHeight: 1.6, fontWeight: msg.role === "coach" ? 500 : 400 }}>
+                      {msg.content}
                     </div>
-                    <textarea disabled={submitted} value={workings[brick.id] || ""}
-                      onChange={e => setWorkings(p => ({ ...p, [brick.id]: e.target.value }))}
-                      placeholder={`Show your working for "${brick.name}"…`}
-                      style={{ width: "100%", height: 56, borderRadius: 8, border: `1px solid ${C.border}`, padding: "10px 12px", fontSize: 13, outline: "none", resize: "none", fontFamily: "inherit", boxSizing: "border-box", opacity: submitted ? 0.6 : 1 }} />
-                  </Card>
+                  </div>
                 ))}
+                {coachLoading && (
+                  <div style={{ display: "flex", gap: 10 }}>
+                    <div style={{ width: 32, height: 32, background: C.indigo, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: C.white, fontWeight: 800, fontSize: 12 }}>AI</div>
+                    <div style={{ background: C.slate100, borderRadius: "4px 12px 12px 12px", padding: "12px 16px" }}>
+                      <div style={{ display: "flex", gap: 4 }}>
+                        {[0,1,2].map(i => <div key={i} style={{ width: 7, height: 7, background: C.slate500, borderRadius: "50%", animation: `bounce 1.2s ease-in-out ${i*0.2}s infinite` }} />)}
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {coachComplete && (
+                  <div style={{ background: C.emeraldLight, borderRadius: 10, padding: "14px 16px", border: `1px solid ${C.emerald}` }}>
+                    <p style={{ fontSize: 12, fontWeight: 700, color: C.emerald, margin: "0 0 6px" }}>✅ Coaching session complete!</p>
+                    <p style={{ fontSize: 12, color: C.slate600, margin: 0, lineHeight: 1.5 }}>
+                      You've worked through 3 guided questions. Your mathematical reasoning is stronger. Ready for the next challenge?
+                    </p>
+                  </div>
+                )}
+                <div ref={coachRef} />
               </div>
-            )}
-
-            {sequence.length >= 1 && (
-              <Card style={{ marginTop: 16 }}>
-                <label style={{ fontSize: 13, fontWeight: 600, color: C.slate700, display: "block", marginBottom: 8 }}>My final answer</label>
-                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
-                  <input disabled={submitted} value={finalAnswer} onChange={e => setFinalAnswer(e.target.value)} type="number"
-                    style={{ width: 120, borderRadius: 8, border: `1.5px solid ${C.border}`, padding: "10px 12px", fontSize: 14, outline: "none", fontFamily: "inherit" }} placeholder="e.g. 75" />
-                  <span style={{ fontSize: 13, color: C.slate500 }}>days</span>
+              {!coachComplete && (
+                <div style={{ display: "flex", gap: 8, paddingTop: 12, borderTop: `1px solid ${C.border}`, marginTop: 8 }}>
+                  <input ref={coachInputRef} value={coachInput} onChange={e => setCoachInput(e.target.value)} onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendCoachMessage()}
+                    placeholder="Type your answer or question…" disabled={coachLoading}
+                    style={{ flex: 1, borderRadius: 8, border: `1.5px solid ${C.border}`, padding: "10px 12px", fontSize: 13, outline: "none", fontFamily: "inherit" }} />
+                  <button onClick={sendCoachMessage} disabled={!coachInput.trim() || coachLoading}
+                    style={{ background: C.indigo, color: C.white, border: "none", borderRadius: 8, padding: "0 18px", cursor: "pointer", fontSize: 16, opacity: !coachInput.trim() || coachLoading ? 0.4 : 1 }}>→</button>
                 </div>
-                <label style={{ fontSize: 13, fontWeight: 600, color: C.slate700, display: "block", marginBottom: 8 }}>{PROJECT.interpretationPrompt}</label>
-                <textarea disabled={submitted} value={interpretation} onChange={e => setInterpretation(e.target.value)}
-                  style={{ width: "100%", height: 76, borderRadius: 8, border: `1.5px solid ${C.border}`, padding: "10px 12px", fontSize: 13, outline: "none", resize: "none", fontFamily: "inherit", boxSizing: "border-box" }}
-                  placeholder="What does the number mean for the farmer?" />
-              </Card>
-            )}
+              )}
+              <p style={{ fontSize: 11, color: C.slate500, textAlign: "center", margin: "8px 0 0" }}>
+                {coachComplete ? "Coaching complete · 4 of 4 questions" : `Question ${coachQuestionCount} of 4 · Socratic coaching powered by AI `}
+              </p>
+            </Card>
 
-            {!submitted ? (
-              <Button disabled={!canSubmit} onClick={() => setSubmitted(true)} style={{ marginTop: 16, opacity: canSubmit ? 1 : 0.4 }}>Show my thinking →</Button>
-            ) : (
-              <Card style={{ marginTop: 16, background: C.emeraldLight, border: `1px solid ${C.emerald}` }}>
-                <p style={{ fontWeight: 700, fontSize: 14, color: C.emerald, margin: "0 0 8px" }}>✅ Reasoning trail captured!</p>
-                <p style={{ fontSize: 13, color: C.slate600, margin: "0 0 14px", lineHeight: 1.6 }}>
-                  Your AI Socratic Coach has read your brick sequence and is ready to ask the right questions.
-                </p>
-                <Button variant="success" onClick={() => onCoach({ sequence, workings, finalAnswer, interpretation, gaps: diagResult?.gaps })}>Talk to your Scaffio Coach →</Button>
-              </Card>
+            {coachComplete && (
+              <Button onClick={() => onComplete?.()} style={{ width: "100%", padding: "14px 20px", fontSize: 15, fontWeight: 700 }}>
+                Continue to Badges & Certificates →
+              </Button>
             )}
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
 }
 
-// ─── SCREEN: AI SOCRATIC COACH (SMART FARM) ──────────────────────────────────
-function AISocraticCoach({ child, sessionData }: any) {
-  const [messages, setMessages] = useState<any[]>([]);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const bottomRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+// ─── SCREEN: MATHS PROBLEM SOLVING (NEW) ───────────────────────────────────
+function MathsProblemSolving() {
+  const [selectedTheme, setSelectedTheme] = useState<string | null>(null);
+  const [selectedProblem, setSelectedProblem] = useState<any>(null);
+  const [studentAnswer, setStudentAnswer] = useState("");
+  const [showHint, setShowHint] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
-  const brickNames = (sessionData?.sequence || []).join(" → ");
-  const isLive = !!sessionData?.sequence?.length;
-  
-  // Count coach questions (messages from coach)
-  const coachQuestionCount = messages.filter(m => m.role === "coach").length;
-  const conversationComplete = coachQuestionCount >= 3;
+  const problem = selectedTheme && selectedProblem 
+    ? THEMATIC_PROBLEMS.find(p => p.id === selectedTheme)?.problems.find(pr => pr.id === selectedProblem)
+    : null;
+  const theme = selectedTheme ? THEMATIC_PROBLEMS.find(p => p.id === selectedTheme) : null;
 
-  useEffect(() => {
-    if (!isLive) return;
-    const firstBrick = sessionData.sequence?.[0];
-    const prompt = firstBrick
-      ? `I just finished the workshop. I started with "${firstBrick}". Can you help me?`
-      : "I just finished the workshop. Can you help me check my thinking?";
-    setLoading(true);
-    getCoachResponse(prompt, sessionData, [])
-      .then(r => { setMessages([{ role: "coach", content: r }]); setLoading(false); });
-  }, [isLive]);
-
-  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, loading]);
-
-  const send = async () => {
-    if (!input.trim() || loading || conversationComplete) return;
-    const userMsg = { role: "user", content: input };
-    const newMsgs = [...messages, userMsg];
-    setMessages(newMsgs);
-    setInput("");
-    setLoading(true);
-    const history = newMsgs.map(m => ({ role: m.role === "coach" ? "assistant" : "user", content: m.content }));
-    const r = await getCoachResponse(input, sessionData, history.slice(0, -1));
-    setMessages(p => [...p, { role: "coach", content: r }]);
-    setLoading(false);
-    setTimeout(() => inputRef.current?.focus(), 100);
-  };
-
-  return (
-    <div>
-      <SectionTitle
-        eyebrow="Step 6"
-        title="AI Socratic Coach"
-        subtitle="Live AI coach — reading your brick sequence and asking questions. Never gives answers. Always develops your mathematical reasoning."
-      />
-      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 20 }}>
-        <div>
-          {/* Context strip */}
-          {isLive && (
-            <div style={{ background: C.slate50, border: `1px solid ${C.border}`, borderRadius: 10, padding: "12px 16px", marginBottom: 16, display: "flex", gap: 20, flexWrap: "wrap" }}>
-              <div><span style={{ fontSize: 10, color: C.slate500, fontWeight: 700, textTransform: "uppercase" }}>Brick sequence</span><br /><span style={{ fontSize: 12, color: C.slate900, fontWeight: 600 }}>{brickNames || "—"}</span></div>
-              <div><span style={{ fontSize: 10, color: C.slate500, fontWeight: 700, textTransform: "uppercase" }}>Answer</span><br /><span style={{ fontSize: 12, color: C.slate900 }}>{sessionData?.finalAnswer || "—"} {PROJECT.answerUnit}</span></div>
-              <div style={{ flex: 1 }}><span style={{ fontSize: 10, color: C.slate500, fontWeight: 700, textTransform: "uppercase" }}>Interpretation</span><br /><span style={{ fontSize: 12, color: C.slate900, fontStyle: "italic" }}>&quot;{(sessionData?.interpretation || "—").slice(0, 80)}&quot;</span></div>
-            </div>
-          )}
-
-          {/* RAG context strip */}
-          <div style={{ borderRadius: 10, background: C.indigoLight, padding: "12px 16px", marginBottom: 16 }}>
-            <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: C.indigo, margin: "0 0 4px" }}>RAG context retrieved</p>
-            <p style={{ fontSize: 12, lineHeight: 1.6, color: C.indigoDark, margin: 0 }}>
-              Project: Smart Farm (water tank proportional reasoning) · Coaching rule: Ask about first step, then guide validation and real-world meaning · Safety: never gives the formula.
-            </p>
-          </div>
-
-          {/* Messages */}
-          <Card style={{ display: "flex", flexDirection: "column", minHeight: 360, maxHeight: 440 }}>
-            <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 14, paddingBottom: 8 }}>
-              <style>{`@keyframes bounce{0%,80%,100%{transform:scale(1)}40%{transform:scale(1.4)}}`}</style>
-              {messages.map((msg, i) => (
-                <div key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start", flexDirection: msg.role === "user" ? "row-reverse" : "row" }}>
-                  {msg.role === "coach" && (
-                    <div style={{ width: 32, height: 32, background: C.indigo, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: C.white, fontWeight: 800, fontSize: 12, flexShrink: 0 }}>AI</div>
-                  )}
-                  <div style={{ background: msg.role === "coach" ? C.slate100 : C.indigo, color: msg.role === "coach" ? C.slate700 : C.white, borderRadius: msg.role === "coach" ? "4px 12px 12px 12px" : "12px 4px 12px 12px", padding: "12px 16px", maxWidth: "80%", fontSize: 13, lineHeight: 1.6, fontWeight: msg.role === "coach" ? 500 : 400 }}>
-                    {msg.content}
-                  </div>
-                </div>
-              ))}
-              {loading && (
-                <div style={{ display: "flex", gap: 10 }}>
-                  <div style={{ width: 32, height: 32, background: C.indigo, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", color: C.white, fontWeight: 800, fontSize: 12 }}>AI</div>
-                  <div style={{ background: C.slate100, borderRadius: "4px 12px 12px 12px", padding: "12px 16px" }}>
-                    <div style={{ display: "flex", gap: 4 }}>
-                      {[0,1,2].map(i => <div key={i} style={{ width: 7, height: 7, background: C.slate500, borderRadius: "50%", animation: `bounce 1.2s ease-in-out ${i*0.2}s infinite` }} />)}
-                    </div>
-                  </div>
-                </div>
-              )}
-              {conversationComplete && (
-                <div style={{ background: C.emeraldLight, borderRadius: 10, padding: "14px 16px", border: `1px solid ${C.emerald}`, marginTop: 10 }}>
-                  <p style={{ fontSize: 12, fontWeight: 700, color: C.emerald, margin: "0 0 6px" }}>✅ Coaching session complete!</p>
-                  <p style={{ fontSize: 12, color: C.slate600, margin: 0, lineHeight: 1.5 }}>
-                    You've worked through 3 guided questions. Your reasoning is now stronger. Ready for the next mission?
-                  </p>
-                </div>
-              )}
-              <div ref={bottomRef} />
-            </div>
-            {!conversationComplete && (
-              <div style={{ display: "flex", gap: 8, paddingTop: 12, borderTop: `1px solid ${C.border}`, marginTop: 8 }}>
-                <input ref={inputRef} value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && !e.shiftKey && send()}
-                  placeholder="Type your answer or question…" disabled={loading}
-                  style={{ flex: 1, borderRadius: 8, border: `1.5px solid ${C.border}`, padding: "10px 12px", fontSize: 13, outline: "none", fontFamily: "inherit" }} />
-                <button onClick={send} disabled={!input.trim() || loading}
-                  style={{ background: C.indigo, color: C.white, border: "none", borderRadius: 8, padding: "0 18px", cursor: "pointer", fontSize: 16, opacity: !input.trim() || loading ? 0.4 : 1 }}>→</button>
+  if (!selectedTheme) {
+    // ── Theme selection ────────────────────────────────────────────────────
+    return (
+      <div>
+        <SectionTitle
+          eyebrow="Step 6"
+          title="Maths Problem Solving"
+          subtitle="Explore real-world maths connected to AI, Data Science, Blockchain, and Programming. Build skills across themes."
+        />
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 20, maxWidth: 1000 }}>
+          {THEMATIC_PROBLEMS.map(t => (
+            <Card key={t.id} onClick={() => setSelectedTheme(t.id)} style={{ background: C.white, border: `2px solid ${t.color}`, cursor: "pointer", transition: "all 0.2s", paddingTop: 0 }}>
+              <div style={{ background: t.color, color: C.white, padding: "20px", borderRadius: "14px 14px 0 0", fontSize: 36, marginBottom: 0, textAlign: "center" }}>
+                {t.emoji}
               </div>
-            )}
-            <p style={{ fontSize: 11, color: C.slate500, textAlign: "center", margin: "8px 0 0" }}>
-              {conversationComplete ? "Coaching complete · 3 of 3 questions asked" : `Scaffio Coach asks up to 3 questions — never gives answers. Question ${coachQuestionCount} of 3. Powered by Generative AI usign RAG.`}
-            </p>
-          </Card>
+              <div style={{ padding: "20px" }}>
+                <h3 style={{ fontSize: 16, fontWeight: 800, color: C.slate950, margin: "0 0 6px" }}>{t.title}</h3>
+                <p style={{ fontSize: 13, color: t.color, fontWeight: 700, margin: "0 0 10px" }}>{t.theme}</p>
+                <p style={{ fontSize: 12, lineHeight: 1.6, color: C.slate600, margin: "0 0 14px" }}>{t.subtitle}</p>
+                <p style={{ fontSize: 11, color: C.slate500, margin: 0 }}>📚 {t.problems.length} problem{t.problems.length !== 1 ? 's' : ''} · 💻 Programming task included</p>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (!selectedProblem && theme) {
+    // ── Problem selection within theme ────────────────────────────────────
+    return (
+      <div>
+        <button onClick={() => setSelectedTheme(null)} style={{ background: "none", border: "none", color: C.indigo, cursor: "pointer", fontSize: 14, fontWeight: 600, marginBottom: 20, padding: 0 }}>
+          ← Back to themes
+        </button>
+        <SectionTitle
+          eyebrow={theme.theme}
+          title={theme.title}
+          subtitle={theme.realWorldContext}
+        />
+        <Card style={{ background: `${theme.color}15`, border: `1px solid ${theme.color}40`, marginBottom: 20 }}>
+          <p style={{ fontSize: 13, lineHeight: 1.7, color: C.slate700, margin: 0 }}><strong>Core maths:</strong> {theme.coreMaths}</p>
+        </Card>
+
+        <div style={{ display: "grid", gap: 16, maxWidth: 800, marginBottom: 20 }}>
+          {theme.problems.map((p, i) => (
+            <Card key={p.id} onClick={() => setSelectedProblem(p.id)} style={{ background: C.white, border: `1px solid ${C.border}`, cursor: "pointer", transition: "all 0.2s" }}>
+              <div style={{ display: "flex", alignItems: "flex-start", gap: 14, justifyContent: "space-between" }}>
+                <div>
+                  <h4 style={{ fontSize: 14, fontWeight: 700, color: C.slate950, margin: "0 0 8px" }}>Problem {i + 1}</h4>
+                  <p style={{ fontSize: 13, lineHeight: 1.6, color: C.slate600, margin: 0 }}>{p.question}</p>
+                </div>
+                <span style={{ fontSize: 22, cursor: "pointer" }}>→</span>
+              </div>
+            </Card>
+          ))}
         </div>
 
-        {/* Coaching context */}
-        <Card style={{ background: C.indigoLight }}>
-          <h3 style={{ fontSize: 14, fontWeight: 700, color: C.indigo, margin: "0 0 14px" }}>AI Coach method</h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {[
-              ["1. Check understanding", "Ask about your first brick choice and why"],
-              ["2. Validate reasoning", "Guide you to test your answer against the data"],
-              ["3. Bridge to meaning", "Ask what the answer means for the farmer"],
-            ].map(([title, desc], idx) => (
-              <div key={title} style={{ borderRadius: 8, padding: "10px 12px", background: coachQuestionCount >= idx + 1 ? "#c7d2fe" : "rgba(255,255,255,0.5)", borderLeft: coachQuestionCount >= idx + 1 ? `3px solid ${C.indigo}` : "3px solid transparent" }}>
-                <p style={{ fontSize: 12, fontWeight: 700, color: C.indigo, margin: "0 0 2px" }}>{title}</p>
-                <p style={{ fontSize: 11, color: C.indigoDark, margin: 0, lineHeight: 1.4 }}>{desc}</p>
-              </div>
-            ))}
-          </div>
-          <div style={{ marginTop: 14, background: "white", borderRadius: 8, padding: "10px 12px" }}>
-            <p style={{ fontSize: 11, fontWeight: 700, color: C.indigo, margin: "0 0 4px" }}>🤖 LIVE AI ACTIVE</p>
-            <p style={{ fontSize: 11, color: C.indigoDark, margin: 0, lineHeight: 1.5 }}>
-              {conversationComplete 
-                ? "You've completed the coaching cycle with 3 guided questions."
-                : `AI is asking targeted questions. ${3 - coachQuestionCount} question${3 - coachQuestionCount === 1 ? "" : "s"} remaining.`}
-            </p>
-          </div>
+        {/* Programming task */}
+        <Card style={{ background: C.indigoLight, marginTop: 20 }}>
+          <h4 style={{ fontSize: 14, fontWeight: 700, color: C.indigo, margin: "0 0 10px" }}>💻 {theme.programmingTask.title}</h4>
+          <p style={{ fontSize: 12, color: C.indigoDark, margin: "0 0 10px", lineHeight: 1.6 }}><strong>Language:</strong> {theme.programmingTask.language}</p>
+          <p style={{ fontSize: 12, color: C.indigoDark, margin: "0 0 12px", lineHeight: 1.6 }}>{theme.programmingTask.description}</p>
+          <pre style={{ background: C.white, padding: "12px", borderRadius: 8, fontSize: 11, lineHeight: 1.5, overflowX: "auto", color: C.slate700, margin: 0 }}>
+            {theme.programmingTask.pseudocode}
+          </pre>
         </Card>
       </div>
-    </div>
-  );
+    );
+  }
+
+  // ── Problem solving ────────────────────────────────────────────────────
+  if (problem && theme) {
+    return (
+      <div>
+        <button onClick={() => setSelectedProblem(null)} style={{ background: "none", border: "none", color: C.indigo, cursor: "pointer", fontSize: 14, fontWeight: 600, marginBottom: 20, padding: 0 }}>
+          ← Back to problems
+        </button>
+
+        <SectionTitle eyebrow={theme.theme} title={problem.question} subtitle="" />
+
+        {!submitted ? (
+          <div style={{ maxWidth: 700 }}>
+            <Card style={{ marginBottom: 20 }}>
+              <label style={{ fontSize: 13, fontWeight: 600, color: C.slate700, display: "block", marginBottom: 12 }}>Your answer</label>
+              <textarea value={studentAnswer} onChange={e => setStudentAnswer(e.target.value)}
+                style={{ width: "100%", height: 100, borderRadius: 8, border: `1.5px solid ${C.border}`, padding: "12px 14px", fontSize: 13, outline: "none", resize: "none", fontFamily: "inherit", boxSizing: "border-box", marginBottom: 14 }}
+                placeholder="Show your working or write your answer…" />
+              
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button onClick={() => setShowHint(!showHint)} variant="secondary">
+                  {showHint ? "Hide hint" : "Show hint"}
+                </Button>
+                <Button onClick={() => setSubmitted(true)} disabled={!studentAnswer.trim()}>
+                  Submit answer
+                </Button>
+              </div>
+
+              {showHint && (
+                <div style={{ background: "#fef3e2", border: `1px solid #fed7aa`, borderRadius: 8, padding: "12px 14px", marginTop: 14 }}>
+                  <p style={{ fontSize: 12, color: "#b45309", fontWeight: 600, margin: "0 0 6px" }}>💡 Hint:</p>
+                  <p style={{ fontSize: 12, color: "#b45309", margin: 0, lineHeight: 1.5 }}>{problem.hint}</p>
+                </div>
+              )}
+            </Card>
+          </div>
+        ) : (
+          <Card style={{ background: C.indigoLight, marginBottom: 20 }}>
+            <h4 style={{ fontSize: 14, fontWeight: 700, color: C.indigo, margin: "0 0 10px" }}>✅ Answer received!</h4>
+            <p style={{ fontSize: 12, color: C.indigoDark, margin: "0 0 10px", lineHeight: 1.6 }}><strong>Your approach:</strong></p>
+            <p style={{ fontSize: 13, color: C.indigoDark, margin: "0 0 14px", lineHeight: 1.6, fontStyle: "italic" }}>"{studentAnswer}"</p>
+            <p style={{ fontSize: 12, color: C.indigoDark, margin: "0 0 10px", lineHeight: 1.6 }}><strong>Expected approach:</strong></p>
+            <p style={{ fontSize: 13, color: C.indigoDark, margin: 0, lineHeight: 1.6 }}>{problem.expectedApproach}</p>
+            <Button onClick={() => { setSubmitted(false); setStudentAnswer(""); setShowHint(false); }} style={{ marginTop: 14 }} variant="secondary">
+              Try another problem
+            </Button>
+          </Card>
+        )}
+      </div>
+    );
+  }
+
+  return null;
 }
 
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
@@ -692,14 +924,11 @@ export default function ScaffioDemo() {
   const [yearGroup, setYearGroup] = useState("Year 8");
   const [selectedConcerns, setSelectedConcerns] = useState(["Low confidence", "Algebra feels confusing"]);
   const [selectedInterests, setSelectedInterests] = useState(["AI", "Coding"]);
-  const [selectedBricks, setSelectedBricks] = useState(["Variable", "Equation", "Prediction"]);
-  const [coachLevel, setCoachLevel] = useState(0);
 
   // Live AI state
   const [diagResponses, setDiagResponses] = useState<any>(null);
   const [diagResult, setDiagResult] = useState<any>(null);
   const [analysing, setAnalysing] = useState(false);
-  const [workshopSession, setWorkshopSession] = useState<any>(null);
 
   const goto = (s: string) => setScreen(s);
 
@@ -819,7 +1048,7 @@ export default function ScaffioDemo() {
                 <h2 style={{ fontSize: 36, fontWeight: 800, color: C.slate950, margin: 0, letterSpacing: "-0.5px" }}>How Scaffio closes the gap</h2>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
                 {[
                   { emoji: "🧭", title: "Diagnose the real gap", desc: "AI analyzes answer accuracy, explanation quality, confidence and misconception patterns — not just scores." },
                   { emoji: "🧱", title: "Capture reasoning", desc: "Logic Bricks make mathematical thinking visible. Students show their reasoning, not just their answer." },
@@ -990,13 +1219,13 @@ export default function ScaffioDemo() {
         <LogicBrickWorkshop
           child={childName}
           diagResult={diagResult}
-          onCoach={(session: any) => { setWorkshopSession(session); goto("AI Socratic Coach"); }}
+          onComplete={() => goto("Badges & Certificates")}
         />
       );
 
-      // ── AI SOCRATIC COACH (LIVE) ─────────────────────────────────────────
-      case "AI Socratic Coach": return (
-        <AISocraticCoach child={childName} sessionData={workshopSession} />
+      // ── MATHS PROBLEM SOLVING ──────────────────────────────────────────────
+      case "Maths Problem Solving": return (
+        <MathsProblemSolving />
       );
 
       // ── BADGES ────────────────────────────────────────────────────────────
