@@ -26,9 +26,13 @@ const C = {
 };
 
 // ─── SHARED UI ───────────────────────────────────────────────────────────────
-function Card({ children, className = "", style = {} }: any) {
+function Card({ children, className = "", style = {}, onClick = null }: any) {
   return (
-    <div style={{ borderRadius: 16, border: `1px solid ${C.border}`, background: C.white, padding: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", ...style }} className={className}>
+    <div 
+      onClick={onClick}
+      style={{ borderRadius: 16, border: `1px solid ${C.border}`, background: C.white, padding: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", ...style }} 
+      className={className}
+    >
       {children}
     </div>
   );
@@ -602,7 +606,18 @@ function LogicBrickWorkshop({ child, diagResult, onComplete }: any) {
     setCoachLoading(true);
     const history = newMsgs.map(m => ({ role: m.role === "coach" ? "assistant" : "user", content: m.content }));
     const r = await getCoachResponse(coachInput, { sequence, finalAnswer, interpretation }, history.slice(0, -1));
-    setCoachMessages(p => [...p, { role: "coach", content: r }]);
+    
+    // Check if this will be the 3rd coach response
+    const futureCoachCount = history.filter(m => m.role === "assistant").length + 1;
+    
+    if (futureCoachCount >= 3) {
+      // This is the final coach response - add a completion explanation
+      const completionExplanation = `\n\n---\n\n🎓 **Session Summary:**\n\nYou've completed 3 guided coaching questions. Through our conversation, you've:\n1. Reflected on your initial approach and brick sequence\n2. Tested your reasoning against the problem's constraints\n3. Explained the real-world meaning of your answer\n\nYour mathematical thinking has become deeper and more rigorous. You're now ready to apply this reasoning to new problems. Well done! 🎉`;
+      setCoachMessages(p => [...p, { role: "coach", content: r + completionExplanation }]);
+    } else {
+      setCoachMessages(p => [...p, { role: "coach", content: r }]);
+    }
+    
     setCoachLoading(false);
     setTimeout(() => coachInputRef.current?.focus(), 100);
   };
@@ -717,7 +732,7 @@ function LogicBrickWorkshop({ child, diagResult, onComplete }: any) {
               </p>
             </Card>
 
-            <SectionTitle eyebrow="Embedded coach" title="AI Socratic Coach" subtitle="Answer questions to deepen your thinking. We ask up to 4 questions." />
+            <SectionTitle eyebrow="Embedded coach" title="AI Socratic Coach" subtitle="Answer questions to deepen your thinking. We ask up to 3 questions." />
 
             {/* Coach messages */}
             <Card style={{ display: "flex", flexDirection: "column", minHeight: 300, maxHeight: 440, marginBottom: 20 }}>
@@ -744,10 +759,15 @@ function LogicBrickWorkshop({ child, diagResult, onComplete }: any) {
                   </div>
                 )}
                 {coachComplete && (
-                  <div style={{ background: C.emeraldLight, borderRadius: 10, padding: "14px 16px", border: `1px solid ${C.emerald}` }}>
-                    <p style={{ fontSize: 12, fontWeight: 700, color: C.emerald, margin: "0 0 6px" }}>✅ Coaching session complete!</p>
-                    <p style={{ fontSize: 12, color: C.slate600, margin: 0, lineHeight: 1.5 }}>
-                      You've worked through 3 guided questions. Your mathematical reasoning is stronger. Ready for the next challenge?
+                  <div style={{ background: C.emeraldLight, borderRadius: 10, padding: "16px 18px", border: `2px solid ${C.emerald}`, marginTop: 10 }}>
+                    <p style={{ fontSize: 13, fontWeight: 800, color: C.emerald, margin: "0 0 8px", display: "flex", alignItems: "center", gap: 8 }}>
+                      <span>✅</span> Coaching session complete!
+                    </p>
+                    <p style={{ fontSize: 12, color: C.slate700, margin: "0 0 6px", lineHeight: 1.5 }}>
+                      You've successfully completed 3 guided questions with your AI coach. Your mathematical reasoning and problem-solving approach have been strengthened.
+                    </p>
+                    <p style={{ fontSize: 11, color: C.slate600, margin: 0, fontStyle: "italic" }}>
+                      Next: Review your badges or try the Maths Problem Solving module to practice with other real-world scenarios.
                     </p>
                   </div>
                 )}
@@ -763,7 +783,7 @@ function LogicBrickWorkshop({ child, diagResult, onComplete }: any) {
                 </div>
               )}
               <p style={{ fontSize: 11, color: C.slate500, textAlign: "center", margin: "8px 0 0" }}>
-                {coachComplete ? "Coaching complete · 4 of 4 questions" : `Question ${coachQuestionCount} of 4 · Socratic coaching powered by AI `}
+                {coachComplete ? "Coaching complete · 3 of 3 questions" : `Question ${coachQuestionCount} of 3 · Socratic coaching powered by Claude AI`}
               </p>
             </Card>
 
@@ -779,21 +799,24 @@ function LogicBrickWorkshop({ child, diagResult, onComplete }: any) {
   );
 }
 
-// ─── SCREEN: MATHS PROBLEM SOLVING (NEW) ───────────────────────────────────
+// ─── SCREEN: MATHS PROBLEM SOLVING (REBUILT WITH SUB-MODULES) ───────────────
 function MathsProblemSolving() {
   const [selectedTheme, setSelectedTheme] = useState<string | null>(null);
+  const [selectedSubModule, setSelectedSubModule] = useState<"problems" | "programming" | null>(null);
   const [selectedProblem, setSelectedProblem] = useState<any>(null);
   const [studentAnswer, setStudentAnswer] = useState("");
   const [showHint, setShowHint] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [programmingCode, setProgrammingCode] = useState("");
+  const [programmingSubmitted, setProgrammingSubmitted] = useState(false);
 
   const problem = selectedTheme && selectedProblem 
     ? THEMATIC_PROBLEMS.find(p => p.id === selectedTheme)?.problems.find(pr => pr.id === selectedProblem)
     : null;
   const theme = selectedTheme ? THEMATIC_PROBLEMS.find(p => p.id === selectedTheme) : null;
 
+  // ─── SCREEN 1: THEME SELECTION ──────────────────────────────────────────────
   if (!selectedTheme) {
-    // ── Theme selection ────────────────────────────────────────────────────
     return (
       <div>
         <SectionTitle
@@ -811,7 +834,7 @@ function MathsProblemSolving() {
                 <h3 style={{ fontSize: 16, fontWeight: 800, color: C.slate950, margin: "0 0 6px" }}>{t.title}</h3>
                 <p style={{ fontSize: 13, color: t.color, fontWeight: 700, margin: "0 0 10px" }}>{t.theme}</p>
                 <p style={{ fontSize: 12, lineHeight: 1.6, color: C.slate600, margin: "0 0 14px" }}>{t.subtitle}</p>
-                <p style={{ fontSize: 11, color: C.slate500, margin: 0 }}>📚 {t.problems.length} problem{t.problems.length !== 1 ? 's' : ''} · 💻 Programming task included</p>
+                <p style={{ fontSize: 11, color: C.slate500, margin: 0 }}>📚 {t.problems.length} problems · 💻 Programming task</p>
               </div>
             </Card>
           ))}
@@ -820,65 +843,109 @@ function MathsProblemSolving() {
     );
   }
 
-  if (!selectedProblem && theme) {
-    // ── Problem selection within theme ────────────────────────────────────
+  // ─── SCREEN 2: SUB-MODULE SELECTION (Problems vs Programming) ───────────────
+  if (selectedTheme && !selectedSubModule && theme) {
     return (
       <div>
         <button onClick={() => setSelectedTheme(null)} style={{ background: "none", border: "none", color: C.indigo, cursor: "pointer", fontSize: 14, fontWeight: 600, marginBottom: 20, padding: 0 }}>
           ← Back to themes
         </button>
+        
         <SectionTitle
           eyebrow={theme.theme}
           title={theme.title}
           subtitle={theme.realWorldContext}
         />
+
         <Card style={{ background: `${theme.color}15`, border: `1px solid ${theme.color}40`, marginBottom: 20 }}>
           <p style={{ fontSize: 13, lineHeight: 1.7, color: C.slate700, margin: 0 }}><strong>Core maths:</strong> {theme.coreMaths}</p>
         </Card>
 
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 20, maxWidth: 1000 }}>
+          {/* Sub-Module 1: Solve Problems */}
+          <Card onClick={() => setSelectedSubModule("problems")} style={{ background: C.white, border: `2px solid ${C.emerald}`, cursor: "pointer", transition: "all 0.2s" }}>
+            <div style={{ fontSize: 44, textAlign: "center", marginBottom: 14 }}>📚</div>
+            <h3 style={{ fontSize: 16, fontWeight: 800, color: C.slate950, margin: "0 0 8px", textAlign: "center" }}>Solve Problems</h3>
+            <p style={{ fontSize: 13, lineHeight: 1.6, color: C.slate600, margin: "0 0 14px", textAlign: "center" }}>
+              Practice {theme.problems.length} maths problem{theme.problems.length !== 1 ? 's' : ''} with hints and feedback
+            </p>
+            <div style={{ textAlign: "center" }}>
+              <span style={{ background: C.emerald, color: C.white, borderRadius: 20, padding: "6px 12px", fontSize: 11, fontWeight: 700 }}>
+                {theme.problems.length} questions
+              </span>
+            </div>
+          </Card>
+
+          {/* Sub-Module 2: Programming Task */}
+          <Card onClick={() => setSelectedSubModule("programming")} style={{ background: C.white, border: `2px solid ${C.indigo}`, cursor: "pointer", transition: "all 0.2s" }}>
+            <div style={{ fontSize: 44, textAlign: "center", marginBottom: 14 }}>💻</div>
+            <h3 style={{ fontSize: 16, fontWeight: 800, color: C.slate950, margin: "0 0 8px", textAlign: "center" }}>Programming Task</h3>
+            <p style={{ fontSize: 13, lineHeight: 1.6, color: C.slate600, margin: "0 0 14px", textAlign: "center" }}>
+              Write code to solve a real-world problem using {theme.programmingTask.language}
+            </p>
+            <div style={{ textAlign: "center" }}>
+              <span style={{ background: C.indigo, color: C.white, borderRadius: 20, padding: "6px 12px", fontSize: 11, fontWeight: 700 }}>
+                {theme.programmingTask.language}
+              </span>
+            </div>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // ─── SCREEN 3A: SOLVE PROBLEMS SUB-MODULE ──────────────────────────────────
+  if (selectedTheme && selectedSubModule === "problems" && !selectedProblem && theme) {
+    return (
+      <div>
+        <button onClick={() => setSelectedSubModule(null)} style={{ background: "none", border: "none", color: C.indigo, cursor: "pointer", fontSize: 14, fontWeight: 600, marginBottom: 20, padding: 0 }}>
+          ← Back to {theme.title}
+        </button>
+
+        <SectionTitle
+          eyebrow="Sub-module: Solve Problems"
+          title={`${theme.title} - Practice Questions`}
+          subtitle={`Solve ${theme.problems.length} problem${theme.problems.length !== 1 ? 's' : ''} to master these concepts`}
+        />
+
         <div style={{ display: "grid", gap: 16, maxWidth: 800, marginBottom: 20 }}>
           {theme.problems.map((p, i) => (
-            <Card key={p.id} onClick={() => setSelectedProblem(p.id)} style={{ background: C.white, border: `1px solid ${C.border}`, cursor: "pointer", transition: "all 0.2s" }}>
-              <div style={{ display: "flex", alignItems: "flex-start", gap: 14, justifyContent: "space-between" }}>
-                <div>
-                  <h4 style={{ fontSize: 14, fontWeight: 700, color: C.slate950, margin: "0 0 8px" }}>Problem {i + 1}</h4>
-                  <p style={{ fontSize: 13, lineHeight: 1.6, color: C.slate600, margin: 0 }}>{p.question}</p>
-                </div>
-                <span style={{ fontSize: 22, cursor: "pointer" }}>→</span>
+            <Card key={p.id} onClick={() => setSelectedProblem(p.id)} style={{ background: C.white, border: `1px solid ${C.border}`, cursor: "pointer", transition: "all 0.2s", paddingRight: 0, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ flex: 1 }}>
+                <h4 style={{ fontSize: 14, fontWeight: 700, color: C.slate950, margin: "0 0 8px" }}>Question {i + 1}</h4>
+                <p style={{ fontSize: 13, lineHeight: 1.6, color: C.slate600, margin: 0 }}>{p.question}</p>
               </div>
+              <div style={{ fontSize: 24, padding: "0 16px", color: C.emerald }}>→</div>
             </Card>
           ))}
         </div>
 
-        {/* Programming task */}
-        <Card style={{ background: C.indigoLight, marginTop: 20 }}>
-          <h4 style={{ fontSize: 14, fontWeight: 700, color: C.indigo, margin: "0 0 10px" }}>💻 {theme.programmingTask.title}</h4>
-          <p style={{ fontSize: 12, color: C.indigoDark, margin: "0 0 10px", lineHeight: 1.6 }}><strong>Language:</strong> {theme.programmingTask.language}</p>
-          <p style={{ fontSize: 12, color: C.indigoDark, margin: "0 0 12px", lineHeight: 1.6 }}>{theme.programmingTask.description}</p>
-          <pre style={{ background: C.white, padding: "12px", borderRadius: 8, fontSize: 11, lineHeight: 1.5, overflowX: "auto", color: C.slate700, margin: 0 }}>
-            {theme.programmingTask.pseudocode}
-          </pre>
+        <Card style={{ background: C.emeraldLight, border: `1px solid ${C.emerald}` }}>
+          <p style={{ fontSize: 12, fontWeight: 700, color: C.emerald, margin: "0 0 6px" }}>💡 Tip:</p>
+          <p style={{ fontSize: 12, color: C.slate600, margin: 0, lineHeight: 1.5 }}>
+            Use the hint if you're stuck, but try to solve it yourself first. This builds stronger problem-solving skills!
+          </p>
         </Card>
       </div>
     );
   }
 
-  // ── Problem solving ────────────────────────────────────────────────────
-  if (problem && theme) {
+  // ─── SCREEN 3B: SOLVE INDIVIDUAL PROBLEM ────────────────────────────────────
+  if (selectedTheme && selectedSubModule === "problems" && selectedProblem && problem && theme) {
     return (
       <div>
         <button onClick={() => setSelectedProblem(null)} style={{ background: "none", border: "none", color: C.indigo, cursor: "pointer", fontSize: 14, fontWeight: 600, marginBottom: 20, padding: 0 }}>
-          ← Back to problems
+          ← Back to questions
         </button>
 
-        <SectionTitle eyebrow={theme.theme} title={problem.question} subtitle="" />
+        <SectionTitle eyebrow={`${theme.theme} - Question`} title={problem.question} subtitle="" />
 
         {!submitted ? (
           <div style={{ maxWidth: 700 }}>
             <Card style={{ marginBottom: 20 }}>
               <label style={{ fontSize: 13, fontWeight: 600, color: C.slate700, display: "block", marginBottom: 12 }}>Your answer</label>
               <textarea value={studentAnswer} onChange={e => setStudentAnswer(e.target.value)}
-                style={{ width: "100%", height: 100, borderRadius: 8, border: `1.5px solid ${C.border}`, padding: "12px 14px", fontSize: 13, outline: "none", resize: "none", fontFamily: "inherit", boxSizing: "border-box", marginBottom: 14 }}
+                style={{ width: "100%", height: 120, borderRadius: 8, border: `1.5px solid ${C.border}`, padding: "12px 14px", fontSize: 13, outline: "none", resize: "none", fontFamily: "inherit", boxSizing: "border-box", marginBottom: 14 }}
                 placeholder="Show your working or write your answer…" />
               
               <div style={{ display: "flex", gap: 10 }}>
@@ -902,7 +969,7 @@ function MathsProblemSolving() {
           <Card style={{ background: C.indigoLight, marginBottom: 20 }}>
             <h4 style={{ fontSize: 14, fontWeight: 700, color: C.indigo, margin: "0 0 10px" }}>✅ Answer received!</h4>
             <p style={{ fontSize: 12, color: C.indigoDark, margin: "0 0 10px", lineHeight: 1.6 }}><strong>Your approach:</strong></p>
-            <p style={{ fontSize: 13, color: C.indigoDark, margin: "0 0 14px", lineHeight: 1.6, fontStyle: "italic" }}>"{studentAnswer}"</p>
+            <p style={{ fontSize: 13, color: C.indigoDark, margin: "0 0 14px", lineHeight: 1.6, fontStyle: "italic", background: C.white, padding: "10px 12px", borderRadius: 6 }}>"{studentAnswer}"</p>
             <p style={{ fontSize: 12, color: C.indigoDark, margin: "0 0 10px", lineHeight: 1.6 }}><strong>Expected approach:</strong></p>
             <p style={{ fontSize: 13, color: C.indigoDark, margin: 0, lineHeight: 1.6 }}>{problem.expectedApproach}</p>
             <Button onClick={() => { setSubmitted(false); setStudentAnswer(""); setShowHint(false); }} style={{ marginTop: 14 }} variant="secondary">
@@ -910,6 +977,79 @@ function MathsProblemSolving() {
             </Button>
           </Card>
         )}
+      </div>
+    );
+  }
+
+  // ─── SCREEN 4: PROGRAMMING TASK PRACTICE ────────────────────────────────────
+  if (selectedTheme && selectedSubModule === "programming" && theme) {
+    return (
+      <div>
+        <button onClick={() => setSelectedSubModule(null)} style={{ background: "none", border: "none", color: C.indigo, cursor: "pointer", fontSize: 14, fontWeight: 600, marginBottom: 20, padding: 0 }}>
+          ← Back to {theme.title}
+        </button>
+
+        <SectionTitle
+          eyebrow="Sub-module: Programming Task"
+          title={theme.programmingTask.title}
+          subtitle={`Write code in ${theme.programmingTask.language} to solve this problem`}
+        />
+
+        <Card style={{ background: C.indigoLight, border: `1px solid ${C.indigo}`, marginBottom: 20 }}>
+          <p style={{ fontSize: 12, lineHeight: 1.7, color: C.indigoDark, margin: 0 }}><strong>📋 Problem:</strong><br />{theme.programmingTask.description}</p>
+        </Card>
+
+        <Card style={{ marginBottom: 20 }}>
+          <h4 style={{ fontSize: 13, fontWeight: 700, color: C.slate950, margin: "0 0 12px" }}>📝 Starter Template</h4>
+          <pre style={{ background: "#f8f9fa", padding: "12px", borderRadius: 8, fontSize: 11, lineHeight: 1.5, overflowX: "auto", color: C.slate700, margin: "0 0 14px", border: `1px solid ${C.border}` }}>
+            {theme.programmingTask.pseudocode}
+          </pre>
+
+          <label style={{ fontSize: 13, fontWeight: 600, color: C.slate700, display: "block", marginBottom: 10 }}>Your code ({theme.programmingTask.language})</label>
+          <textarea value={programmingCode} onChange={e => setProgrammingCode(e.target.value)}
+            style={{ width: "100%", height: 200, borderRadius: 8, border: `1.5px solid ${C.border}`, padding: "12px 14px", fontSize: 12, outline: "none", resize: "none", fontFamily: "monospace", boxSizing: "border-box", marginBottom: 14, background: "#f8f9fa" }}
+            placeholder={`# Write your ${theme.programmingTask.language} code here...`} />
+          
+          <div style={{ display: "flex", gap: 10 }}>
+            <Button onClick={() => setProgrammingCode("")} variant="secondary">
+              Clear code
+            </Button>
+            <Button onClick={() => setProgrammingSubmitted(true)} disabled={!programmingCode.trim()}>
+              Submit solution
+            </Button>
+          </div>
+        </Card>
+
+        {programmingSubmitted && (
+          <Card style={{ background: C.emeraldLight, border: `1px solid ${C.emerald}` }}>
+            <h4 style={{ fontSize: 14, fontWeight: 700, color: C.emerald, margin: "0 0 10px" }}>✅ Solution submitted!</h4>
+            <p style={{ fontSize: 12, color: C.slate700, margin: "0 0 10px", lineHeight: 1.5 }}>
+              <strong>Great work!</strong> You've written code to solve this problem. 
+            </p>
+            <div style={{ background: C.white, padding: "12px", borderRadius: 8, marginBottom: 12 }}>
+              <p style={{ fontSize: 11, color: C.slate600, margin: "0 0 8px", fontWeight: 600 }}>Your submission:</p>
+              <pre style={{ margin: 0, fontSize: 11, lineHeight: 1.4, color: C.slate700, whiteSpace: "pre-wrap", wordWrap: "break-word" }}>
+                {programmingCode.slice(0, 300)}{programmingCode.length > 300 ? "..." : ""}
+              </pre>
+            </div>
+            <p style={{ fontSize: 12, color: C.slate700, margin: "0 0 12px", lineHeight: 1.5, fontStyle: "italic" }}>
+              💡 <strong>Next step:</strong> Test your code with different inputs and edge cases to make sure it works correctly!
+            </p>
+            <Button onClick={() => { setProgrammingSubmitted(false); setProgrammingCode(""); }} variant="secondary">
+              Edit code
+            </Button>
+          </Card>
+        )}
+
+        <Card style={{ background: "#fef3e2", border: `1px solid #fed7aa`, marginTop: 20 }}>
+          <p style={{ fontSize: 12, fontWeight: 700, color: "#b45309", margin: "0 0 6px" }}>💻 Tips for success:</p>
+          <ul style={{ fontSize: 12, color: "#b45309", margin: "0", paddingLeft: 20, lineHeight: 1.6 }}>
+            <li>Start with the pseudocode template provided above</li>
+            <li>Test your code with different inputs</li>
+            <li>Check edge cases (empty inputs, very large numbers, etc.)</li>
+            <li>Add comments to explain your logic</li>
+          </ul>
+        </Card>
       </div>
     );
   }
@@ -1048,7 +1188,7 @@ export default function ScaffioDemo() {
                 <h2 style={{ fontSize: 36, fontWeight: 800, color: C.slate950, margin: 0, letterSpacing: "-0.5px" }}>How Scaffio closes the gap</h2>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
                 {[
                   { emoji: "🧭", title: "Diagnose the real gap", desc: "AI analyzes answer accuracy, explanation quality, confidence and misconception patterns — not just scores." },
                   { emoji: "🧱", title: "Capture reasoning", desc: "Logic Bricks make mathematical thinking visible. Students show their reasoning, not just their answer." },
@@ -1305,6 +1445,19 @@ export default function ScaffioDemo() {
                     <p style={{ fontSize: 12, lineHeight: 1.6, color: C.slate600, margin: 0 }}>{item.sample}</p>
                   </div>
                 ))}
+              </div>
+            </Card>
+            <Card>
+              <h3 style={{ fontSize: 14, fontWeight: 700, color: C.slate950, margin: "0 0 14px" }}>MVP technology stack</h3>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}>
+                {[["Frontend","Next.js 14, TypeScript, Tailwind, shadcn/ui"],["Backend","Next.js API routes (no separate server)"],["Database","Supabase PostgreSQL + pgvector"],["Vector search","pgvector in Supabase (replaces Pinecone)"],["AI","Anthropic Claude Haiku + Sonnet via API"],["Payments","Stripe Checkout + Billing"],["Analytics","PostHog + Sentry"]].map(([k,v]) => (
+                  <div key={k as string} style={{ borderRadius: 8, background: C.slate50, padding: "10px 12px", fontSize: 13 }}>
+                    <strong style={{ color: C.slate900 }}>{k}:</strong> <span style={{ color: C.slate600 }}>{v}</span>
+                  </div>
+                ))}
+              </div>
+              <div style={{ borderRadius: 10, background: C.indigoLight, padding: "12px 14px", fontSize: 13, lineHeight: 1.6, color: C.indigoDark }}>
+                Founder/admin can review flagged AI responses, edit RAG items, update prompts, add diagnostic questions and monitor AI cost per active student.
               </div>
             </Card>
           </div>
